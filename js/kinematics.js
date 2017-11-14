@@ -1,5 +1,15 @@
+let can_move = false;
+function allowMove(e) {
+	can_move = true;
+}
+function disableMove(e) {
+	can_move = false;
+}
 function rotateOnMouse(e) {
+	if(!can_move)
+		return
 	let translation = new THREE.Vector3(e.movementX, e.movementY);
+	movementX = 0; movementY = 0;
 	let rotation = sc2wc(translation);
 	let center = new THREE.Vector3(0, 0, 0);
 	let y_axis = new THREE.Vector3(0, 1, 0);
@@ -34,3 +44,5 @@ function rotateAboutPoint(pos, point, revolution) {
 }
 
 window.addEventListener("mousemove", rotateOnMouse);
+window.addEventListener("mousedown", allowMove);
+window.addEventListener("mouseup", disableMove);
