@@ -1,6 +1,5 @@
 function Edge(line = undefined, point = undefined, height = undefined) {
 	this.line = line;
-	console.log(this.line);
 	this.point = point;
 	let diff = new THREE.Vector3(0,0,0);
 	diff.subVectors(line.geometry.vertices[1], line.geometry.vertices[0]);
