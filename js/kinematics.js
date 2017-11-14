@@ -1,39 +1,36 @@
 function rotateOnMouse(e) {
-	let oldX = e.clientX - e.movementX;
-	let oldY = e.clientY - e.movementY;
-	let newVec = sc2wc(new THREE.Vector3(e.clientX, e.clientY));
-	let oldVec = sc2wc(new THREE.Vector3(oldX, oldY));
-	let rotation = new THREE.Quaternion();
-	rotation.setFromUnitVectors(oldVec, newVec);
-	let center = new THREE.Vector3(0,0,0);
-	let axis = new THREE.Vector3(0,1,0);
-	env.scene.children.forEach((el) => {
-		rotateAboutPoint(el, el.type === "Line" ? el.geometry.vertices[1] : el.position, center, axis, rotation);
+	let translation = new THREE.Vector3(e.movementX, e.movementY);
+	let rotation = sc2wc(translation);
+	let center = new THREE.Vector3(0, 0, 0);
+	let y_axis = new THREE.Vector3(0, 1, 0);
+	let x_axis = new THREE.Vector3(-1, 0, 0);
+	objs = env.scene.children.filter((el) => {
+		return el.type === "Line" || el.type === "Mesh";
+	});
+	objs.forEach((el) => {
+		rotateGeometry(el, center, y_axis, rotation.x);
+		rotateGeometry(el, center, x_axis, rotation.y);
 	});
 }
 
 function sc2wc(s) {
-	let vector = new THREE.Vector3();
-
-	vector.set(
-		( s.x / window.innerWidth ) * 2 - 1,
-		-( s.y / window.innerHeight ) * 2 + 1,
-		0.5
-	);
-
-	vector.unproject( env.camera );
-
-	return vector.sub( env.camera.position ).normalize();
+	return new THREE.Vector3((s.x / window.innerWidth) * 2 * Math.PI, -(s.y / window.innerHeight) * 2 * Math.PI);
 }
 
-function rotateAboutPoint(obj, end, point, axis, rotation) {
-	let distance = new THREE.Vector3();
-	distance.subVectors(point, end);
+function rotateGeometry(obj, point, axis, theta) {
 	let revolution = new THREE.Quaternion();
-	revolution.setFromUnitVectors(axis, rotation);
-	obj.position.add(distance);
+	let look = new THREE.Vector3(0,0,0);
+	revolution.setFromAxisAngle(axis, theta);
+	rotateAboutPoint(obj.position, point, revolution);
+	obj.applyQuaternion(revolution);
+}
+
+function rotateAboutPoint(pos, point, revolution) {
+	let distance = new THREE.Vector3();
+	distance.subVectors(point, pos);
+	pos.add(distance);
 	distance.applyQuaternion(revolution);
-	obj.position.sub(distance);
+	pos.sub(distance);
 }
 
 window.addEventListener("mousemove", rotateOnMouse);
