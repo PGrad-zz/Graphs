@@ -48,10 +48,15 @@ function VertexFactory(sphere_props, position) {
 }
 
 function Graph(my_props) {
+	this.can_move = false;
 	let vertices = {};
 	let edges = {};
 	let props = my_props;
 	let scene = props.scene;
+	this.center = props.center;
+	window.addEventListener("mousemove", rotateOnMouse.bind(this));
+	window.addEventListener("mousedown", allowMove.bind(this));
+	window.addEventListener("mouseup", disableMove.bind(this));
 	this.addEdge = (p1, p2) => {
 		this.addVertex(p1);
 		this.addVertex(p2);

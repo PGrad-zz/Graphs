@@ -1,25 +1,25 @@
-let can_move = false;
 function allowMove(e) {
-	can_move = true;
+	this.can_move = true;
 }
 function disableMove(e) {
-	can_move = false;
+	this.can_move = false;
 }
 function rotateOnMouse(e) {
-	if(!can_move)
+	if(!this.can_move)
 		return
 	let translation = new THREE.Vector3(e.movementX, e.movementY);
 	movementX = 0; movementY = 0;
 	let rotation = sc2wc(translation);
-	let center = new THREE.Vector3(0, 0, 0);
 	let y_axis = new THREE.Vector3(0, 1, 0);
+	y_axis.add(this.center);
 	let x_axis = new THREE.Vector3(-1, 0, 0);
+	x_axis.add(this.center);
 	objs = env.scene.children.filter((el) => {
 		return el.type === "Line" || el.type === "Mesh";
 	});
 	objs.forEach((el) => {
-		rotateGeometry(el, center, y_axis, rotation.x);
-		rotateGeometry(el, center, x_axis, rotation.y);
+		rotateGeometry(el, this.center, y_axis, rotation.x);
+		rotateGeometry(el, this.center, x_axis, rotation.y);
 	});
 }
 
@@ -29,7 +29,6 @@ function sc2wc(s) {
 
 function rotateGeometry(obj, point, axis, theta) {
 	let revolution = new THREE.Quaternion();
-	let look = new THREE.Vector3(0,0,0);
 	revolution.setFromAxisAngle(axis, theta);
 	rotateAboutPoint(obj.position, point, revolution);
 	obj.applyQuaternion(revolution);
@@ -42,7 +41,3 @@ function rotateAboutPoint(pos, point, revolution) {
 	distance.applyQuaternion(revolution);
 	pos.sub(distance);
 }
-
-window.addEventListener("mousemove", rotateOnMouse);
-window.addEventListener("mousedown", allowMove);
-window.addEventListener("mouseup", disableMove);

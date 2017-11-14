@@ -24,6 +24,7 @@ let animate = function () {
 
 function makeGraph() {
 	let graph = new Graph({
+		center: new THREE.Vector3(0,0,0),
 		line_props: {
 			material: { color: 0xffffff },
 			mat_func: THREE.LineBasicMaterial
