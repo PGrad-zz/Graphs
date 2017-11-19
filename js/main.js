@@ -11,9 +11,14 @@ function initEnv() {
 
 	env.light = new THREE.PointLight(0xdd90a5, 20, 0);
 	env.light.position.set(0, 20, 0);
+	env.light2 = new THREE.PointLight(0xdd90a5, 20, 0);
+	env.light2.position.set(0, -20, 0);
 
 	env.scene = new THREE.Scene();
 	env.scene.add(env.light);
+	env.scene.add(env.light2);
+	env.can_move = false;
+	env.center = new THREE.Vector3(0,0,0);
 }
 
 let animate = function () {

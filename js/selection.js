@@ -21,7 +21,6 @@ function make_edge(e) {
 		first_pt = null;
 	let s = getScreenCoords(e);
 	let hits = raycastHit(s);
-	console.log(hits);
 	if(hits.length === 0)
 		return;
 	let hit = hits[0].object;

@@ -1,21 +1,21 @@
 function allowMove(e) {
-	this.can_move = true;
+	env.can_move = true;
 }
 function disableMove(e) {
-	this.can_move = false;
+	env.can_move = false;
 }
 function rotateOnMouse(e) {
-	if(!this.can_move)
+	if(!env.can_move)
 		return
 	let translation = new THREE.Vector3(e.movementX, e.movementY);
 	movementX = 0; movementY = 0;
 	let rotation = screen_angle(translation);
 	let y_axis = new THREE.Vector3(0, 1, 0);
-	y_axis.add(this.center);
+	y_axis.add(env.center);
 	let x_axis = new THREE.Vector3(-1, 0, 0);
-	x_axis.add(this.center);
-	rotateGeometry(env.camera, this.center, y_axis, rotation.x);
-	rotateGeometry(env.camera, this.center, x_axis, rotation.y);
+	x_axis.add(env.center);
+	rotateGeometry(env.camera, env.center, y_axis, rotation.x);
+	rotateGeometry(env.camera, env.center, x_axis, rotation.y);
 }
 
 function screen_angle(s) {
@@ -36,3 +36,15 @@ function rotateAboutPoint(pos, point, revolution) {
 	distance.applyQuaternion(revolution);
 	pos.sub(distance);
 }
+
+function zoom(e) {
+	let factor = 0.1;
+	let delta = factor * e.deltaY;
+	let dir = env.camera.position.clone().normalize();
+	env.camera.position.add(dir.multiplyScalar(delta));
+}
+
+window.addEventListener("mousemove", rotateOnMouse);
+window.addEventListener("mousedown", allowMove);
+window.addEventListener("mouseup", disableMove);
+window.addEventListener("wheel", zoom);
