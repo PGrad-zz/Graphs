@@ -9,21 +9,16 @@ function rotateOnMouse(e) {
 		return
 	let translation = new THREE.Vector3(e.movementX, e.movementY);
 	movementX = 0; movementY = 0;
-	let rotation = sc2wc(translation);
+	let rotation = screen_angle(translation);
 	let y_axis = new THREE.Vector3(0, 1, 0);
 	y_axis.add(this.center);
 	let x_axis = new THREE.Vector3(-1, 0, 0);
 	x_axis.add(this.center);
-	objs = env.scene.children.filter((el) => {
-		return el.type === "Line" || el.type === "Mesh";
-	});
-	objs.forEach((el) => {
-		rotateGeometry(el, this.center, y_axis, rotation.x);
-		rotateGeometry(el, this.center, x_axis, rotation.y);
-	});
+	rotateGeometry(env.camera, this.center, y_axis, rotation.x);
+	rotateGeometry(env.camera, this.center, x_axis, rotation.y);
 }
 
-function sc2wc(s) {
+function screen_angle(s) {
 	return new THREE.Vector3((s.x / window.innerWidth) * 2 * Math.PI, -(s.y / window.innerHeight) * 2 * Math.PI);
 }
 

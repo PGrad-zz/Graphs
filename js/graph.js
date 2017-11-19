@@ -54,6 +54,9 @@ function Graph(my_props) {
 	let props = my_props;
 	let scene = props.scene;
 	this.center = props.center;
+	window.addEventListener("mousemove", rotateOnMouse.bind(this));
+	window.addEventListener("mousedown", allowMove.bind(this));
+	window.addEventListener("mouseup", disableMove.bind(this));
 	this.addEdge = (p1, p2) => {
 		console.log(this.findVertex(p1));
 		if(this.findVertex(p1) === null || this.findVertex(p2) === null)
