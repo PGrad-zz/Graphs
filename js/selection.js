@@ -1,3 +1,4 @@
+'use strict';
 let raycaster = new THREE.Raycaster();
 let first_pt = null;
 let newVert = false;

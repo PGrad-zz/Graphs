@@ -1,3 +1,4 @@
+'use strict';
 function Edge(line = undefined, point = undefined, height = undefined) {
 	this.line = line;
 	this.point = point;

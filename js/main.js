@@ -1,3 +1,4 @@
+'use strict';
 let env = {};
 var graph;
 function initEnv() {

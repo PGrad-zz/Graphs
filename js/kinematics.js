@@ -1,3 +1,4 @@
+'use strict';
 function allowMove(e) {
 	env.can_move = true;
 }
@@ -8,7 +9,7 @@ function rotateOnMouse(e) {
 	if(!env.can_move)
 		return
 	let translation = new THREE.Vector3(e.movementX, e.movementY);
-	movementX = 0; movementY = 0;
+	let movementX = 0; movementY = 0;
 	let rotation = screen_angle(translation);
 	let y_axis = new THREE.Vector3(0, 1, 0);
 	y_axis.add(env.center);
