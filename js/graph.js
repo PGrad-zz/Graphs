@@ -54,12 +54,10 @@ function Graph(my_props) {
 	let props = my_props;
 	let scene = props.scene;
 	this.center = props.center;
-	window.addEventListener("mousemove", rotateOnMouse.bind(this));
-	window.addEventListener("mousedown", allowMove.bind(this));
-	window.addEventListener("mouseup", disableMove.bind(this));
 	this.addEdge = (p1, p2) => {
-		this.addVertex(p1);
-		this.addVertex(p2);
+		console.log(this.findVertex(p1));
+		if(this.findVertex(p1) === null || this.findVertex(p2) === null)
+			return;
 		if(!([p1.toArray(), p2.toArray()] in edges)) {
 			let edge = EdgeFactory(props.line_props, props.pt_props, p1, p2);
 			edges[[p1.toArray(), p2.toArray()]] = edge;
@@ -68,10 +66,17 @@ function Graph(my_props) {
 		}
 	};
 	this.addVertex = (position) => {
-		if (!(position in vertices)) {
+		if (!(position.toArray() in vertices)) {
 			let v = VertexFactory(props.vertex_props, position);
 			vertices[position.toArray()] = v;
 			scene.add(v.sphere);
 		}
+		if(vertices.length === 1)
+			this.center = v.sphere.position;
+	};
+	this.findVertex = (position) => {
+		if(position.toArray() in vertices)
+			return vertices[position.toArray()];
+		return null;
 	};
 }
