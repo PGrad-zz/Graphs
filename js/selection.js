@@ -31,7 +31,10 @@ function make_edge(e) {
 		return;
 	}
 	if(hit.uuid !== first_pt.uuid) {
-		graph.addEdge(first_pt.position, hit.position);
+		if(e.button == 2)
+			graph.addDirEdge(first_pt.position, hit.position);
+		else
+			graph.addEdge(first_pt.position, hit.position);
 		first_pt = e.ctrlKey ? hit : null;
 		newVert = false;
 	}
@@ -63,6 +66,10 @@ function raycastHit(s) {
 	raycaster.setFromCamera(s, env.camera);
 	return raycaster.intersectObjects(env.scene.children);
 }
+
+window.addEventListener('contextmenu', function (e) { // Not compatible with IE < 9
+    e.preventDefault();
+}, false);
 
 window.addEventListener("mousedown", make_point);
 window.addEventListener("mousedown", make_edge);
