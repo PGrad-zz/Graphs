@@ -18,6 +18,9 @@ function rotateOnMouse(e) {
 	x_axis.add(env.center);
 	rotateGeometry(env.camera, env.center, y_axis, rotation.x);
 	rotateGeometry(env.camera, env.center, x_axis, rotation.y);
+	env.texts.forEach((obj) => {
+		obj.lookAt(env.camera.position);
+	});
 }
 
 function screen_angle(s) {

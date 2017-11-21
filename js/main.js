@@ -20,13 +20,23 @@ function initEnv() {
 	env.scene.add(env.light2);
 	env.can_move = false;
 	env.center = new THREE.Vector3(0,0,0);
+	env.font_enabled = false;
+	env.text_font = null;
+	env.can_add_text = false;
+	env.edge_parent = [];
+	env.vertex_parent = [];
+	env.texts = [];
+	return new Promise((resolve, reject) => {
+		let font_loader = new THREE.FontLoader();
+		font_loader.load('assets/fonts/helvetica.json', (font) => {
+			env.text = { font: font, size: 0.2, height: 0.2, material: new THREE.MeshLambertMaterial({color: 0x00ff00}) };
+			resolve(font);
+		}, (prog) => {
+		}, (err) => {
+			reject(err);
+		});
+	});
 }
-
-let animate = function () {
-	requestAnimationFrame( animate );
-
-	env.renderer.render(env.scene, env.camera);
-};
 
 function makeGraph() {
 	graph = new Graph({
@@ -50,6 +60,13 @@ function makeGraph() {
 	});
 }
 
-initEnv();
-makeGraph();
-animate();
+initEnv().then(() => {
+	makeGraph();
+	let animate = function () {
+		requestAnimationFrame( animate );
+		env.renderer.render(env.scene, env.camera);
+	};
+	animate();
+}).catch((err) => {
+	console.log(err);
+});

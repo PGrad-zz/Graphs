@@ -79,6 +79,7 @@ function Graph(my_props) {
 	let props = my_props;
 	let scene = props.scene;
 	this.center = env.center;
+	this.edge_pair = [];
 	this.addEdge = (p1, p2) => {
 		if(this.findVertex(p1) === null || this.findVertex(p2) === null)
 			return;
@@ -86,6 +87,8 @@ function Graph(my_props) {
 		if(!([p1_index, p2_index] in edges)) {
 			let edge = EdgeFactory(props.line_props, p1, p2);
 			edges[[p1_index, p2_index]] = [edge, 0];
+			this.edge_pair[edge.line.uuid] = [p1, p2];
+			env.edge_parent[edge.line.uuid] = this;
 			scene.add(edge.line);
 		}
 	};
@@ -98,6 +101,8 @@ function Graph(my_props) {
 				edges[[p1_index,p2_index]][0].remove();
 			let edge = DirEdgeFactory(props.line_props, props.pt_props, p1, p2);
 			edges[[p1_index, p2_index]] = [edge, 1];
+			this.edge_pair[edge.line.uuid] = [p1, p2];
+			env.edge_parent[edge.line.uuid] = this;
 			scene.add(edge.line);
 			scene.add(edge.point);
 		}
@@ -106,6 +111,7 @@ function Graph(my_props) {
 		if (!(position.toArray() in vertices)) {
 			let v = VertexFactory(props.vertex_props, position);
 			vertices[v.sphere.position.toArray()] = v;
+			env.vertex_parent[v.sphere.uuid] = this;
 			scene.add(v.sphere);
 		}
 		if(vertices.length === 1)
