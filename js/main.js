@@ -5,7 +5,6 @@ function initEnv() {
 	env.renderer = new THREE.WebGLRenderer({antialias: true});
 	env.renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(env.renderer.domElement);
-
 	env.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 	env.camera.position.set(0, 10, 0);
 	env.camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -21,11 +20,14 @@ function initEnv() {
 	env.can_move = false;
 	env.center = new THREE.Vector3(0,0,0);
 	env.font_enabled = false;
-	env.text_font = null;
 	env.can_add_text = false;
 	env.edge_parent = [];
 	env.vertex_parent = [];
 	env.texts = [];
+	env.text_key = "KeyT";
+	env.mode = document.getElementById("mode");
+	env.mode.innerText = "Normal Mode";
+	window.addEventListener( 'resize', onWindowResize, false );
 	return new Promise((resolve, reject) => {
 		let font_loader = new THREE.FontLoader();
 		font_loader.load('assets/fonts/helvetica.json', (font) => {
@@ -36,6 +38,12 @@ function initEnv() {
 			reject(err);
 		});
 	});
+}
+
+function onWindowResize() {
+	env.camera.aspect = window.innerWidth / window.innerHeight;
+	env.camera.updateProjectionMatrix();
+	env.renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
 function makeGraph() {

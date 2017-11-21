@@ -4,6 +4,8 @@ let first_pt = null;
 let newVert = false;
 //Shift + mousedown to create point
 function make_point(e) {
+	if(env.can_add_text)
+		return;
 	if(!e.shiftKey)
 		return;
 	let s = getScreenCoords(e);
@@ -18,6 +20,8 @@ function make_point(e) {
 //mousedown b/w 2 points creates an edge
 //Ctrl key to chain edges
 function make_edge(e) {
+	if(env.can_add_text)
+		return;
 	if(!e.ctrlKey && !newVert)
 		first_pt = null;
 	let s = getScreenCoords(e);
@@ -56,9 +60,13 @@ function sc2wc(s, axis) {
 }
 
 function getScreenCoords(e) {
+	return screenNormal(e.clientX, e.clientY);
+}
+
+function screenNormal(x,y) {
 	return new THREE.Vector3(
-		( e.clientX / window.innerWidth ) * 2 - 1,
-		-( e.clientY / window.innerHeight ) * 2 + 1
+		( x / window.innerWidth ) * 2 - 1,
+		-( y / window.innerHeight ) * 2 + 1
 	);
 }
 
@@ -67,33 +75,35 @@ function raycastHit(s) {
 	return raycaster.intersectObjects(env.scene.children);
 }
 
-function weightPrimed(e) {
-	if(e.code === "KeyA")
-		env.can_add_text = true;
-}
-
-function weightLost(e) {
-	env.can_add_text = false;
+function weightToggle(e) {
+	if(e.code === env.text_key) {
+		if(!env.can_add_text) {
+			env.can_add_text = true;
+			env.mode.innerText = "Weight Mode"
+		} else {
+			env.can_add_text = false;
+			env.mode.innerText = "Normal Mode";
+		}
+	}
 }
 
 function addWeight(e) {
 	if(!env.can_add_text)
 		return;
+	if(e.shiftKey)
+		return;
 	let hits = raycastHit(getScreenCoords(e));
 	if(hits.length === 0)
 		return;
 	let obj = hits[0].object;
+	if(obj.text !== undefined)
+		return;
 	let val = prompt("Enter a value",0);
-	make_text(val, obj);
+	let text_mesh = make_text(val, obj_text_position(obj));
+	obj.text = text_mesh;
 }
 
-function make_text(text, obj) {
-	let text_geom = new THREE.TextGeometry(text, {
-		font: env.text.font,
-		size: env.text.size,
-		height: env.text.height
-	});
-	let text_mesh = new THREE.Mesh(text_geom, env.text.material)
+function obj_text_position(obj) {
 	let pos = new THREE.Vector3();
 	if(obj.type != "Line")
 		pos = pos.copy(obj.position);
@@ -102,20 +112,28 @@ function make_text(text, obj) {
 		pos.addVectors(vertexes[0], vertexes[1]);
 		pos.multiplyScalar(0.5);
 	}
+	return pos;
+}
+
+function make_text(text, pos) {
+	let text_geom = new THREE.TextGeometry(text, {
+		font: env.text.font,
+		size: env.text.size,
+		height: env.text.height
+	});
+	let text_mesh = new THREE.Mesh(text_geom, env.text.material)
 	text_mesh.position.set(pos.x, pos.y, pos.z);
-	text_mesh.parent = obj;
 	text_mesh.lookAt(env.camera.position);
 	env.scene.add(text_mesh);
-	env.can_add_text = false;
 	env.texts.push(text_mesh);
+	return text_mesh;
 }
 
 window.addEventListener('contextmenu', function (e) { // Not compatible with IE < 9
-    e.preventDefault();
-}, false);
+     e.preventDefault();
+ }, false);
 
 window.addEventListener("mousedown", make_point);
 window.addEventListener("mousedown", make_edge);
 window.addEventListener("mousedown", addWeight);
-window.addEventListener("keydown", weightPrimed);
-window.addEventListener("keyup", weightLost);
+window.addEventListener("keydown", weightToggle);
