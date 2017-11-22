@@ -96,9 +96,11 @@ function addWeight(e) {
 	if(hits.length === 0)
 		return;
 	let obj = hits[0].object;
-	if(obj.text !== undefined)
-		return;
 	let val = prompt("Enter a value",0);
+	if(val === null)
+		return;
+	if(obj.text !== undefined)
+		env.scene.remove(obj.text);
 	let text_mesh = make_text(val, obj_text_position(obj));
 	obj.text = text_mesh;
 }
