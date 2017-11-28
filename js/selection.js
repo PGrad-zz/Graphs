@@ -4,7 +4,7 @@ let first_pt = null;
 let newVert = false;
 //Shift + mousedown to create point
 function make_point(e) {
-	if(env.can_add_text)
+	if(env.weight_mode.on)
 		return;
 	if(!e.shiftKey)
 		return;
@@ -20,7 +20,7 @@ function make_point(e) {
 //mousedown b/w 2 points creates an edge
 //Ctrl key to chain edges
 function make_edge(e) {
-	if(env.can_add_text)
+	if(env.weight_mode.on)
 		return;
 	if(!e.ctrlKey && !newVert)
 		first_pt = null;
@@ -75,20 +75,24 @@ function raycastHit(s) {
 	return raycaster.intersectObjects(env.scene.children);
 }
 
-function weightToggle(e) {
-	if(e.code === env.text_key) {
-		if(!env.can_add_text) {
-			env.can_add_text = true;
-			env.mode.innerText = "Weight Mode"
-		} else {
-			env.can_add_text = false;
-			env.mode.innerText = "Normal Mode";
-		}
+function modeToggle(e) {
+	let mode_data = env.ctrls[e.code];
+	if(mode_data === undefined)
+		return;
+	if(!mode_data.on) {
+		for(var mode in env.ctrls)
+			env.ctrls[mode].on = false;
+		mode_data.on = true;
+		env.mode.innerText = mode_data.name + " Mode";
+	} else {
+		for(var mode in env.ctrls)
+			env.ctrls[mode].on = false;
+		env.mode.innerText = "Normal Mode";
 	}
 }
 
 function addWeight(e) {
-	if(!env.can_add_text)
+	if(!env.weight_mode.on)
 		return;
 	if(e.shiftKey)
 		return;
@@ -99,10 +103,25 @@ function addWeight(e) {
 	let val = prompt("Enter a value",0);
 	if(val === null)
 		return;
+	make_weight(obj, val);
+}
+
+function make_weight(obj, val) {
 	if(obj.text !== undefined)
 		env.scene.remove(obj.text);
 	let text_mesh = make_text(val, obj_text_position(obj));
 	obj.text = text_mesh;
+	obj.val = parseInt(val);
+}
+
+function do_dijkstra(e) {
+	if(!env.dijkstra_mode.on)
+		return;
+	let hits = raycastHit(getScreenCoords(e));
+	if(hits.length === 0)
+		return;
+	let obj = hits[0].object;
+	dijkstra(graph.vertices[obj.position.toArray()])
 }
 
 function obj_text_position(obj) {
@@ -138,4 +157,5 @@ window.addEventListener('contextmenu', function (e) { // Not compatible with IE 
 window.addEventListener("mousedown", make_point);
 window.addEventListener("mousedown", make_edge);
 window.addEventListener("mousedown", addWeight);
-window.addEventListener("keydown", weightToggle);
+window.addEventListener("mousedown", do_dijkstra);
+window.addEventListener("keydown", modeToggle);

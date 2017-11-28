@@ -20,13 +20,17 @@ function initEnv() {
 	env.can_move = false;
 	env.center = new THREE.Vector3(0,0,0);
 	env.font_enabled = false;
-	env.can_add_text = false;
+	env.weight_mode = { on : false, name : "Weight"};
+	env.dijkstra_mode = { on : false, name : "Dijkstra"};
+	env.ctrls = {};
+	env.ctrls["KeyW"] = env.weight_mode;
+	env.ctrls["KeyD"] = env.dijkstra_mode;
 	env.edge_parent = [];
 	env.vertex_parent = [];
 	env.texts = [];
-	env.text_key = "KeyT";
 	env.mode = document.getElementById("mode");
 	env.mode.innerText = "Normal Mode";
+	env.sensitivity = 2;
 	window.addEventListener( 'resize', onWindowResize, false );
 	return new Promise((resolve, reject) => {
 		let font_loader = new THREE.FontLoader();

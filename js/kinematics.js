@@ -11,7 +11,7 @@ function rotateOnMouse(e) {
 	let translation = new THREE.Vector3(e.movementX, e.movementY);
 	let movementX = 0;
 	let movementY = 0;
-	let rotation = screen_angle(translation);
+	let rotation = screen_angle(translation).multiplyScalar(env.sensitivity);
 	let y_axis = new THREE.Vector3(0, 1, 0);
 	y_axis.add(env.center);
 	let x_axis = new THREE.Vector3(-1, 0, 0);
