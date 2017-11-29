@@ -26,13 +26,18 @@ function connected_components() {
 	clean_nodes();
 	clean_edges();
 	let all_visited = new Set();
+	let color_set = new Set();
 	for(var vert in graph.vertices) {
 		if(all_visited.has(vert))
 			continue;
 		var tree_edges = new Map();
 		var visited = new Set();
 		var start_vtx = graph.vertices[vert];
-		var color = get_random_color();
+		var color = "";
+		do {
+			color = get_random_color();
+		} while(color_set.has(color));
+		color_set.add(color);
 		visited.add(start_vtx);
 		DFS_helper(start_vtx, visited, (cur, neighbor) => {
 			var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
