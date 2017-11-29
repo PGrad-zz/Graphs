@@ -33,3 +33,27 @@ function dijkstra(start_vtx) {
 	for (var edge of tree_edges.values())
 		edge.setColor("#ffff00")
 }
+
+let count = 0;
+function DFS_helper(start_vtx, visited, tree_edges) {
+	let cur = start_vtx;
+	for(var neighbor of graph.neighbors.get(cur).values())
+		if(!visited.has(neighbor)) {
+			visited.add(neighbor)
+			var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
+			tree_edges.set(neighbor, [graph.edges[edge_index], ++count]);
+			DFS_helper(neighbor, visited, tree_edges);
+		}
+}
+
+function DFS(start_vtx) {
+	let tree_edges = new Map();
+	let visited = new Set();
+	count = 0;
+	visited.add(start_vtx);
+	DFS_helper(start_vtx, visited, tree_edges);
+	for (var edge of tree_edges.values()) {
+		edge[0].setColor("#ffff00");
+		make_weight(edge[0].line, edge[1]);
+	}
+}

@@ -114,14 +114,15 @@ function make_weight(obj, val) {
 	obj.val = parseInt(val);
 }
 
-function do_dijkstra(e) {
-	if(!env.dijkstra_mode.on)
-		return;
+function do_algorithm(e) {
 	let hits = raycastHit(getScreenCoords(e));
 	if(hits.length === 0)
 		return;
 	let obj = hits[0].object;
-	dijkstra(graph.vertices[obj.position.toArray()])
+	if(env.dijkstra_mode.on)
+		dijkstra(graph.vertices[obj.position.toArray()])
+	else if(env.DFS_mode.on)
+		DFS(graph.vertices[obj.position.toArray()])
 }
 
 function obj_text_position(obj) {
@@ -157,5 +158,5 @@ window.addEventListener('contextmenu', function (e) { // Not compatible with IE 
 window.addEventListener("mousedown", make_point);
 window.addEventListener("mousedown", make_edge);
 window.addEventListener("mousedown", addWeight);
-window.addEventListener("mousedown", do_dijkstra);
+window.addEventListener("mousedown", do_algorithm);
 window.addEventListener("keydown", modeToggle);
