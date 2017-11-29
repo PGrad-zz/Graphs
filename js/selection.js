@@ -2,12 +2,26 @@
 let raycaster = new THREE.Raycaster();
 let first_pt = null;
 let newVert = false;
+function master(e) {
+	if(env.normal_mode.on) {
+		if(e.shiftKey)
+			make_point(e);
+		else
+			make_edge(e);
+	} else if(env.weight_mode.on)
+		addWeight(e);
+	else
+		do_algorithm(e);
+}
+
+function clean(e) {
+	if(e.code !== "KeyC")
+		return;
+	clean_nodes();
+	clean_edges(true);
+}
 //Shift + mousedown to create point
 function make_point(e) {
-	if(env.weight_mode.on)
-		return;
-	if(!e.shiftKey)
-		return;
 	let s = getScreenCoords(e);
 	let hits = raycastHit(s);
 	for(var i = 0; i < hits.length; ++i)
@@ -20,8 +34,6 @@ function make_point(e) {
 //mousedown b/w 2 points creates an edge
 //Ctrl key to chain edges
 function make_edge(e) {
-	if(env.weight_mode.on)
-		return;
 	if(!e.ctrlKey && !newVert)
 		first_pt = null;
 	let s = getScreenCoords(e);
@@ -79,23 +91,16 @@ function modeToggle(e) {
 	let mode_data = env.ctrls[e.code];
 	if(mode_data === undefined)
 		return;
-	if(!mode_data.on) {
-		for(var mode in env.ctrls)
-			env.ctrls[mode].on = false;
-		mode_data.on = true;
-		env.mode.innerText = mode_data.name + " Mode";
-	} else {
-		for(var mode in env.ctrls)
-			env.ctrls[mode].on = false;
-		env.mode.innerText = "Normal Mode";
-	}
+	let on = mode_data.on;
+	for(var mode in env.ctrls)
+		env.ctrls[mode].on = false;
+	if(on)
+		mode_data = env.ctrls[0];
+	mode_data.on = true;
+	env.mode.innerText = mode_data.name + " Mode";
 }
 
 function addWeight(e) {
-	if(!env.weight_mode.on)
-		return;
-	if(e.shiftKey)
-		return;
 	let hits = raycastHit(getScreenCoords(e));
 	if(hits.length === 0)
 		return;
@@ -108,10 +113,14 @@ function addWeight(e) {
 
 function make_weight(obj, val) {
 	if(obj.text !== undefined)
-		env.scene.remove(obj.text);
+		remove_weight(obj);
 	let text_mesh = make_text(val, obj_text_position(obj));
 	obj.text = text_mesh;
 	obj.val = parseInt(val);
+}
+
+function remove_weight(obj) {
+		env.scene.remove(obj.text);
 }
 
 function do_algorithm(e) {
@@ -154,8 +163,6 @@ function make_text(text, pos) {
 }
 
 
-window.addEventListener("mousedown", make_point);
-window.addEventListener("mousedown", make_edge);
-window.addEventListener("mousedown", addWeight);
-window.addEventListener("mousedown", do_algorithm);
+window.addEventListener("mousedown", master);
 window.addEventListener("keydown", modeToggle);
+window.addEventListener("keydown", clean);

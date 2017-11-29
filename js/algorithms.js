@@ -1,3 +1,19 @@
+function clean_nodes() {
+	for(var key in graph.vertices)
+		remove_weight(graph.vertices[key].sphere);
+}
+
+function clean_edges(clean_weights) {
+	if(clean_weights)
+		for(var key in graph.edges) {
+			graph.edges[key].setColor("#ffffff");
+			remove_weight(graph.edges[key].line);
+		}
+	else
+		for(var key in graph.edges)
+			graph.edges[key].setColor("#ffffff");
+}
+
 function dijkstra(start_vtx) {
 	let vtx_map = new Map();
 	for(var v of graph.neighbors.keys())
@@ -30,6 +46,7 @@ function dijkstra(start_vtx) {
 			pq.queue([neighbor, vtx_map.get(neighbor)]);
 		}
 	}
+	clean_edges(false);
 	for (var edge of tree_edges.values())
 		edge.setColor("#ffff00")
 }
@@ -44,6 +61,17 @@ function DFS_helper(start_vtx, visited, tree_edges) {
 			tree_edges.set(neighbor, [graph.edges[edge_index], ++count]);
 			DFS_helper(neighbor, visited, tree_edges);
 		}
+}
+
+function DFS(start_vtx) {
+	let tree_edges = new Map();
+	let visited = new Set();
+	count = 0;
+	visited.add(start_vtx);
+	DFS_helper(start_vtx, visited, tree_edges);
+	clean_nodes();
+	clean_edges(true);
+	label(tree_edges, "#ff00ff");
 }
 
 function Queue (sz = 10) {
@@ -84,18 +112,6 @@ function Queue (sz = 10) {
 	};
 }
 
-function DFS(start_vtx) {
-	let tree_edges = new Map();
-	let visited = new Set();
-	count = 0;
-	visited.add(start_vtx);
-	DFS_helper(start_vtx, visited, tree_edges);
-	for (var edge of tree_edges.values()) {
-		edge[0].setColor("#ffff00");
-		make_weight(edge[0].line, edge[1]);
-	}
-}
-
 function BFS(start_vtx) {
 	let q = new Queue(10);
 	let visited = new Set();
@@ -116,8 +132,14 @@ function BFS(start_vtx) {
 				tree_edges.set(neighbor, [graph.edges[edge_index], level.get(neighbor)]);
 			}
 	}
+	clean_nodes();
+	clean_edges(true);
+	label(tree_edges, "#ff0000");
+}
+
+function label(tree_edges, color) {
 	for (var edge of tree_edges.values()) {
-		edge[0].setColor("#ffff00");
+		edge[0].setColor(color);
 		make_weight(edge[0].line, edge[1]);
 	}
 }

@@ -20,15 +20,18 @@ function initEnv() {
 	env.can_move = false;
 	env.center = new THREE.Vector3(0,0,0);
 	env.font_enabled = false;
+	env.normal_mode = { on : true, name : "Normal" };
 	env.weight_mode = { on : false, name : "Weight"};
 	env.dijkstra_mode = { on : false, name : "Dijkstra"};
 	env.DFS_mode = { on : false, name : "DFS"};
 	env.BFS_mode = { on : false, name : "BFS"};
-	env.ctrls = {};
-	env.ctrls["KeyW"] = env.weight_mode;
-	env.ctrls["KeyD"] = env.dijkstra_mode;
-	env.ctrls["KeyF"] = env.DFS_mode;
-	env.ctrls["KeyB"] = env.BFS_mode;
+	env.ctrls = {
+		0 : env.normal_mode,
+		"KeyW" : env.weight_mode,
+		"KeyD" : env.dijkstra_mode,
+		"KeyF" : env.DFS_mode,
+		"KeyB" : env.BFS_mode,
+	};
 	env.edge_parent = [];
 	env.vertex_parent = [];
 	env.texts = [];
