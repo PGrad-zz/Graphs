@@ -22,11 +22,13 @@ function initEnv() {
 	env.font_enabled = false;
 	env.weight_mode = { on : false, name : "Weight"};
 	env.dijkstra_mode = { on : false, name : "Dijkstra"};
-	env.DFS_mode= { on : false, name : "DFS"};
+	env.DFS_mode = { on : false, name : "DFS"};
+	env.BFS_mode = { on : false, name : "BFS"};
 	env.ctrls = {};
 	env.ctrls["KeyW"] = env.weight_mode;
 	env.ctrls["KeyD"] = env.dijkstra_mode;
 	env.ctrls["KeyF"] = env.DFS_mode;
+	env.ctrls["KeyB"] = env.BFS_mode;
 	env.edge_parent = [];
 	env.vertex_parent = [];
 	env.texts = [];

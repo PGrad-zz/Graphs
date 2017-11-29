@@ -46,12 +46,76 @@ function DFS_helper(start_vtx, visited, tree_edges) {
 		}
 }
 
+function Queue (sz = 10) {
+	let q = new Array(sz);
+	q.fill(null);
+	let size = sz, front = 0, end = 0, elems = 0;
+	this.enqueue = (val) => {
+	  if(elems === size) {
+	    let old_size = size;
+			this.double();
+			let new_front = front + old_size;
+			q.copyWithin(new_front, front, old_size);
+			front = new_front;
+		}
+	  q[end] = val;
+	  end = ++end % size;
+	  ++elems;
+	};
+	this.double = () => {
+	  if(size === 0)
+	    ++size;
+	  else {
+	    for(i = 0; i < size; ++i)
+	      q.push(null);
+	   size *= 2;
+	  }
+	};
+	this.empty = () => {
+		return elems === 0;
+	};
+	this.dequeue = () => {
+		if(this.empty())
+			throw "Empty";
+		val = q[front];
+		front = ++front % size;
+		--elems;
+		return val;
+	};
+}
+
 function DFS(start_vtx) {
 	let tree_edges = new Map();
 	let visited = new Set();
 	count = 0;
 	visited.add(start_vtx);
 	DFS_helper(start_vtx, visited, tree_edges);
+	for (var edge of tree_edges.values()) {
+		edge[0].setColor("#ffff00");
+		make_weight(edge[0].line, edge[1]);
+	}
+}
+
+function BFS(start_vtx) {
+	let q = new Queue(10);
+	let visited = new Set();
+	let parent = new Map();
+	let level = new Map();
+	q.enqueue(start_vtx);
+	level.set(start_vtx, 0);
+	let tree_edges = new Map();
+	while(!q.empty()) {
+		var cur = q.dequeue();
+		visited.add(cur);
+		for(var neighbor of graph.neighbors.get(cur).values())
+			if(!visited.has(neighbor)) {
+				q.enqueue(neighbor);
+				var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
+				parent.set(neighbor, cur);
+				level.set(neighbor, level.get(cur) + 1);
+				tree_edges.set(neighbor, [graph.edges[edge_index], level.get(neighbor)]);
+			}
+	}
 	for (var edge of tree_edges.values()) {
 		edge[0].setColor("#ffff00");
 		make_weight(edge[0].line, edge[1]);

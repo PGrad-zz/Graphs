@@ -123,6 +123,8 @@ function do_algorithm(e) {
 		dijkstra(graph.vertices[obj.position.toArray()])
 	else if(env.DFS_mode.on)
 		DFS(graph.vertices[obj.position.toArray()])
+	else if(env.BFS_mode.on)
+		BFS(graph.vertices[obj.position.toArray()])
 }
 
 function obj_text_position(obj) {
@@ -151,9 +153,6 @@ function make_text(text, pos) {
 	return text_mesh;
 }
 
-window.addEventListener('contextmenu', function (e) { // Not compatible with IE < 9
-     e.preventDefault();
- }, false);
 
 window.addEventListener("mousedown", make_point);
 window.addEventListener("mousedown", make_edge);
