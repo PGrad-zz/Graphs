@@ -10,6 +10,8 @@ function master(e) {
 			make_edge(e);
 	} else if(env.weight_mode.on)
 		addWeight(e);
+	else if(env.connection_mode.on)
+		connected_components();
 	else
 		do_algorithm(e);
 }

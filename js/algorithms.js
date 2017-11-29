@@ -14,6 +14,40 @@ function clean_edges(clean_weights) {
 			graph.edges[key].setColor("#ffffff");
 }
 
+function get_random_color() {
+	let color = "#";
+	for(i = 0; i < 6; ++i)
+		color += Math.ceil(Math.random() * 15).toString(16);
+	return color;
+}
+
+
+function connected_components() {
+	clean_nodes();
+	clean_edges();
+	let all_visited = new Set();
+	for(var vert in graph.vertices) {
+		if(all_visited.has(vert))
+			continue;
+		var tree_edges = new Map();
+		var visited = new Set();
+		var start_vtx = graph.vertices[vert];
+		var color = get_random_color();
+		visited.add(start_vtx);
+		DFS_helper(start_vtx, visited, (cur, neighbor) => {
+			var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
+			tree_edges.set(neighbor, graph.edges[edge_index]);
+		});
+		for(var el of visited.values()) {
+			all_visited.add(el);
+			for(var neighbor of graph.neighbors.get(el).values()) {
+					var edge_pts = [el.getPosition().toArray(), neighbor.getPosition().toArray()];
+					graph.edges[edge_pts].setColor(color);
+			}
+		}
+	}
+}
+
 function dijkstra(start_vtx) {
 	let vtx_map = new Map();
 	for(var v of graph.neighbors.keys())
@@ -52,14 +86,13 @@ function dijkstra(start_vtx) {
 }
 
 let count = 0;
-function DFS_helper(start_vtx, visited, tree_edges) {
+function DFS_helper(start_vtx, visited, actor) {
 	let cur = start_vtx;
 	for(var neighbor of graph.neighbors.get(cur).values())
 		if(!visited.has(neighbor)) {
 			visited.add(neighbor)
-			var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
-			tree_edges.set(neighbor, [graph.edges[edge_index], ++count]);
-			DFS_helper(neighbor, visited, tree_edges);
+			actor(cur, neighbor);
+			DFS_helper(neighbor, visited, actor);
 		}
 }
 
@@ -68,10 +101,13 @@ function DFS(start_vtx) {
 	let visited = new Set();
 	count = 0;
 	visited.add(start_vtx);
-	DFS_helper(start_vtx, visited, tree_edges);
+	DFS_helper(start_vtx, visited, (cur, neighbor) => {
+		var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
+		tree_edges.set(neighbor, [graph.edges[edge_index], ++count]);
+	});
 	clean_nodes();
 	clean_edges(true);
-	label(tree_edges, "#ff00ff");
+	label(tree_edges, "#ff0000");
 }
 
 function Queue (sz = 10) {

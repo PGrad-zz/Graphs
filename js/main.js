@@ -25,12 +25,14 @@ function initEnv() {
 	env.dijkstra_mode = { on : false, name : "Dijkstra"};
 	env.DFS_mode = { on : false, name : "DFS"};
 	env.BFS_mode = { on : false, name : "BFS"};
+	env.connection_mode = { on : false, name : "Connection"};
 	env.ctrls = {
 		0 : env.normal_mode,
 		"KeyW" : env.weight_mode,
 		"KeyD" : env.dijkstra_mode,
 		"KeyF" : env.DFS_mode,
 		"KeyB" : env.BFS_mode,
+		"KeyU" : env.connection_mode
 	};
 	env.edge_parent = [];
 	env.vertex_parent = [];
