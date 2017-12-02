@@ -30,10 +30,10 @@ function initEnv() {
 		"weight" : "Weight",
 	};
 	env.ctrls = {
-		0 : env.modes.normal,
 		"KeyB" : env.modes.bfs,
 		"KeyD" : env.modes.dijkstra,
 		"KeyF" : env.modes.dfs,
+		"KeyN" : env.modes.normal,
 		"KeyP" : env.modes.prim,
 		"KeyU" : env.modes.connected,
 		"KeyW" : env.modes.weight,

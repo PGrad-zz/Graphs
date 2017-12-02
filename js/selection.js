@@ -142,6 +142,9 @@ function do_algorithm(e) {
 		case env.modes.bfs:
 			BFS(graph.vertices[obj.position.toArray()])
 			break;
+		case env.modes.prim:
+			prim(graph.vertices[obj.position.toArray()])
+			break;
 	}
 }
 

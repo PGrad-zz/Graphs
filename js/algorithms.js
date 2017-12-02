@@ -53,7 +53,7 @@ function connected_components() {
 	}
 }
 
-function dijkstra_prim(start_vtx, val_func) {
+function dijkstra_prim(start_vtx, weight_func, val_func) {
 	let vtx_map = new Map();
 	for(var v of graph.neighbors.keys())
 		vtx_map.set(v, Infinity);
@@ -71,9 +71,11 @@ function dijkstra_prim(start_vtx, val_func) {
 		var cur = pair[0];
 		if(!unvisited.has(cur))
 			continue;
-		make_weight(cur.sphere, vtx_map.get(cur));
+		weight_func(cur.sphere, vtx_map.get(cur));
 		unvisited.delete(cur);
 		for(var neighbor of graph.neighbors.get(cur).values()) {
+			if(!unvisited.has(neighbor))
+				continue;
 			var cur_weight = vtx_map.get(cur);
 			var neighbor_weight = vtx_map.get(neighbor);
 			var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
@@ -89,16 +91,25 @@ function dijkstra_prim(start_vtx, val_func) {
 }
 
 function prim(start_vtx) {
-	let tree_edges = dijkstra_prim(start_vtx, (edgew, curw) => {
+	let count = 1;
+	let tree_edges = dijkstra_prim(start_vtx,
+	(node, val) => {
+		make_weight(node, count++);
+	},
+	(edgew, curw) => {
 		return edgew;
 	});
 	clean_edges(false);
-	for (var edge of tree_edge.values())
+	for (var edge of tree_edges.values())
 		edge.setColor(env.alg_colors[env.modes.prim])
 }
 
 function dijkstra(start_vtx) {
-	let tree_edges = dijkstra_prim(start_vtx, (edgew, curw) => {
+	let tree_edges = dijkstra_prim(start_vtx,
+	(node, val) => {
+		make_weight(node, val);
+	},
+	(edgew, curw) => {
 		return edgew + curw;
 	});
 	clean_edges(false);
@@ -200,7 +211,4 @@ function label(tree_edges, color) {
 		edge[0].setColor(color);
 		make_weight(edge[0].line, edge[1]);
 	}
-}
-
-function prim(start_vtx) {
 }
