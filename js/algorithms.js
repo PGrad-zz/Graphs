@@ -53,7 +53,7 @@ function connected_components() {
 	}
 }
 
-function dijkstra(start_vtx) {
+function dijkstra_prim(start_vtx, val_func) {
 	let vtx_map = new Map();
 	for(var v of graph.neighbors.keys())
 		vtx_map.set(v, Infinity);
@@ -78,16 +78,32 @@ function dijkstra(start_vtx) {
 			var neighbor_weight = vtx_map.get(neighbor);
 			var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
 			var edge_weight = graph.edges[edge_index].getWeight();
-			if(neighbor_weight > (cur_weight + edge_weight)) {
-				vtx_map.set(neighbor, cur_weight + edge_weight);
+			if(neighbor_weight > val_func(edge_weight, cur_weight)) {
+				vtx_map.set(neighbor, val_func(edge_weight, cur_weight));
 				tree_edges.set(neighbor, graph.edges[edge_index]);
 			}
 			pq.queue([neighbor, vtx_map.get(neighbor)]);
 		}
 	}
+	return tree_edges;
+}
+
+function prim(start_vtx) {
+	let tree_edges = dijkstra_prim(start_vtx, (edgew, curw) => {
+		return edgew;
+	});
+	clean_edges(false);
+	for (var edge of tree_edge.values())
+		edge.setColor(env.alg_colors[env.modes.prim])
+}
+
+function dijkstra(start_vtx) {
+	let tree_edges = dijkstra_prim(start_vtx, (edgew, curw) => {
+		return edgew + curw;
+	});
 	clean_edges(false);
 	for (var edge of tree_edges.values())
-		edge.setColor("#ffff00")
+		edge.setColor(env.alg_colors[env.modes.dijkstra])
 }
 
 let count = 0;
@@ -112,7 +128,7 @@ function DFS(start_vtx) {
 	});
 	clean_nodes();
 	clean_edges(true);
-	label(tree_edges, "#ff0000");
+	label(tree_edges, env.alg_colors[env.modes.dfs]);
 }
 
 function Queue (sz = 10) {
@@ -160,12 +176,13 @@ function BFS(start_vtx) {
 	let level = new Map();
 	q.enqueue(start_vtx);
 	level.set(start_vtx, 0);
+	visited.add(start_vtx);
 	let tree_edges = new Map();
 	while(!q.empty()) {
 		var cur = q.dequeue();
-		visited.add(cur);
 		for(var neighbor of graph.neighbors.get(cur).values())
 			if(!visited.has(neighbor)) {
+				visited.add(neighbor);
 				q.enqueue(neighbor);
 				var edge_index = [cur.getPosition().toArray(), neighbor.getPosition().toArray()];
 				parent.set(neighbor, cur);
@@ -175,7 +192,7 @@ function BFS(start_vtx) {
 	}
 	clean_nodes();
 	clean_edges(true);
-	label(tree_edges, "#ff0000");
+	label(tree_edges, env.alg_colors[env.modes.bfs]);
 }
 
 function label(tree_edges, color) {
@@ -183,4 +200,7 @@ function label(tree_edges, color) {
 		edge[0].setColor(color);
 		make_weight(edge[0].line, edge[1]);
 	}
+}
+
+function prim(start_vtx) {
 }

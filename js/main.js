@@ -20,25 +20,36 @@ function initEnv() {
 	env.can_move = false;
 	env.center = new THREE.Vector3(0,0,0);
 	env.font_enabled = false;
-	env.normal_mode = { on : true, name : "Normal" };
-	env.weight_mode = { on : false, name : "Weight"};
-	env.dijkstra_mode = { on : false, name : "Dijkstra"};
-	env.DFS_mode = { on : false, name : "DFS"};
-	env.BFS_mode = { on : false, name : "BFS"};
-	env.connection_mode = { on : false, name : "Connection"};
-	env.ctrls = {
-		0 : env.normal_mode,
-		"KeyW" : env.weight_mode,
-		"KeyD" : env.dijkstra_mode,
-		"KeyF" : env.DFS_mode,
-		"KeyB" : env.BFS_mode,
-		"KeyU" : env.connection_mode
+	env.modes = {
+		"connected" : "Connected",
+		"bfs" : "BFS",
+		"dijkstra" : "Dijkstra",
+		"dfs" : "DFS",
+		"normal" : "Normal",
+		"prim" : "Prim",
+		"weight" : "Weight",
 	};
+	env.ctrls = {
+		0 : env.modes.normal,
+		"KeyB" : env.modes.bfs,
+		"KeyD" : env.modes.dijkstra,
+		"KeyF" : env.modes.dfs,
+		"KeyP" : env.modes.prim,
+		"KeyU" : env.modes.connected,
+		"KeyW" : env.modes.weight,
+	};
+	env.alg_colors = {
+		[env.modes.bfs] : "#ff0000",
+		[env.modes.dijkstra] : "#ffff00",
+		[env.modes.dfs] : "#ff00ff",
+		[env.modes.prim] : "#00ffff",
+	};
+	env.mode = "Normal";
 	env.edge_parent = [];
 	env.vertex_parent = [];
 	env.texts = [];
-	env.mode = document.getElementById("mode");
-	env.mode.innerText = "Normal Mode";
+	env.mode_gui = document.getElementById("mode");
+	env.mode_gui.innerText = "Normal Mode";
 	env.sensitivity = 2;
 	window.addEventListener( 'resize', onWindowResize, false );
 	return new Promise((resolve, reject) => {

@@ -3,17 +3,22 @@ let raycaster = new THREE.Raycaster();
 let first_pt = null;
 let newVert = false;
 function master(e) {
-	if(env.normal_mode.on) {
-		if(e.shiftKey)
-			make_point(e);
-		else
-			make_edge(e);
-	} else if(env.weight_mode.on)
-		addWeight(e);
-	else if(env.connection_mode.on)
-		connected_components();
-	else
-		do_algorithm(e);
+	switch(env.mode) {
+		case env.modes.normal:
+			if(e.shiftKey)
+				make_point(e);
+			else
+				make_edge(e);
+			break;
+		case env.modes.weight:
+			addWeight(e);
+			break;
+		case env.modes.connected:
+			connected_components();
+			break;
+		default:
+			do_algorithm(e);
+	}
 }
 
 function clean(e) {
@@ -90,16 +95,13 @@ function raycastHit(s) {
 }
 
 function modeToggle(e) {
-	let mode_data = env.ctrls[e.code];
-	if(mode_data === undefined)
+	if(env.ctrls[e.code] === undefined)
 		return;
-	let on = mode_data.on;
-	for(var mode in env.ctrls)
-		env.ctrls[mode].on = false;
-	if(on)
-		mode_data = env.ctrls[0];
-	mode_data.on = true;
-	env.mode.innerText = mode_data.name + " Mode";
+	if(env.mode === env.ctrls[e.code])
+		env.mode = env.modes.normal;
+	else
+		env.mode = env.ctrls[e.code];
+	env.mode_gui.innerText = env.mode + " Mode";
 }
 
 function addWeight(e) {
@@ -130,12 +132,17 @@ function do_algorithm(e) {
 	if(hits.length === 0)
 		return;
 	let obj = hits[0].object;
-	if(env.dijkstra_mode.on)
-		dijkstra(graph.vertices[obj.position.toArray()])
-	else if(env.DFS_mode.on)
-		DFS(graph.vertices[obj.position.toArray()])
-	else if(env.BFS_mode.on)
-		BFS(graph.vertices[obj.position.toArray()])
+	switch(env.mode) {
+		case env.modes.dijkstra:
+			dijkstra(graph.vertices[obj.position.toArray()]);
+			break;
+		case env.modes.dfs:
+			DFS(graph.vertices[obj.position.toArray()])
+			break;
+		case env.modes.bfs:
+			BFS(graph.vertices[obj.position.toArray()])
+			break;
+	}
 }
 
 function obj_text_position(obj) {
