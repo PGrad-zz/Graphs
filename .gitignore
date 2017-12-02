@@ -1,0 +1,12 @@
+*
+!.gitignore
+!*.js
+three.js
+priority-queue.js
+!js
+!*.html
+!css
+!*.css
+!assets
+!assets/fonts
+!*.json
