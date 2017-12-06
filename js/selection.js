@@ -63,6 +63,59 @@ function make_edge(e) {
 	}
 }
 
+var start_select;
+
+function enable_selection(e) {
+	env.can_select = true;
+	start_select = sc2wc(getScreenCoords(e), 'y');
+}
+
+function disable_selection(e) {
+	if(env.selector != null)
+		env.scene.remove(env.selector);
+	env.can_select = false;
+}
+
+function selection(e) {
+	if(!env.can_select || env.mode !== env.modes.selection)
+		return;
+	if(env.selector != null)
+		env.scene.remove(env.selector);
+	if(env.selector != null)
+		env.scene.remove(env.selector);
+	let mouse_pos = sc2wc(getScreenCoords(e), 'y');
+	let diff = new THREE.Vector3();
+	diff.subVectors(mouse_pos, start_select);
+	let color = (diff.x * diff.z) > 0 ? 0x0000ff : 0x00ff00;
+	let plane_mat = new THREE.MeshLambertMaterial({color: color});
+	plane_mat.transparent = true;
+	plane_mat.opacity = 0.5;
+	let geom = new THREE.Geometry();
+	let xsgn = (mouse_pos.x / Math.abs(mouse_pos.x));
+	let zsgn = (mouse_pos.z / Math.abs(mouse_pos.z));
+	let vtx_normal = new THREE.Vector3(0, 1, 0);
+	//x, y, z -> x, -z, y
+	geom.vertices.push(
+		new THREE.Vector3(mouse_pos.x, 0, mouse_pos.z),
+		new THREE.Vector3(mouse_pos.x, 0, start_select.z),
+		start_select,
+		new THREE.Vector3(start_select.x, 0, mouse_pos.z)
+	);
+	if((xsgn * zsgn) > 0)
+		geom.faces.push(
+			new THREE.Face3(0, 1, 2, [vtx_normal, vtx_normal, vtx_normal]),
+			new THREE.Face3(2, 3, 0, [vtx_normal, vtx_normal, vtx_normal]),
+		);
+	else
+		geom.faces.push(
+			new THREE.Face3(2, 1, 0, [vtx_normal, vtx_normal, vtx_normal]),
+			new THREE.Face3(0, 3, 2, [vtx_normal, vtx_normal, vtx_normal]),
+		);
+	let plane = new THREE.Mesh(geom, plane_mat);
+	env.selector = plane;
+	env.scene.add(env.selector);
+}
+
 function to_radians(x) {
 	return x * Math.PI / 180;
 }
@@ -176,5 +229,8 @@ function make_text(text, pos) {
 
 
 window.addEventListener("mousedown", master);
+window.addEventListener("mousedown", enable_selection);
+window.addEventListener("mousemove", selection);
+window.addEventListener("mouseup", disable_selection);
 window.addEventListener("keydown", modeToggle);
 window.addEventListener("keydown", clean);

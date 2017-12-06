@@ -6,7 +6,7 @@ function disableMove(e) {
 	env.can_move = false;
 }
 function rotateOnMouse(e) {
-	if(!env.can_move)
+	if(!env.can_move || env.mode !== env.modes.rotate)
 		return
 	let translation = new THREE.Vector3(e.movementX, e.movementY);
 	let movementX = 0;

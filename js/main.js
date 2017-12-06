@@ -14,6 +14,8 @@ function initEnv() {
 	env.light2 = new THREE.PointLight(0xdd90a5, 20, 0);
 	env.light2.position.set(0, -20, 0);
 
+	env.selector = null;
+
 	env.scene = new THREE.Scene();
 	env.scene.add(env.light);
 	env.scene.add(env.light2);
@@ -27,6 +29,8 @@ function initEnv() {
 		"dfs" : "DFS",
 		"normal" : "Normal",
 		"prim" : "Prim",
+		"rotate" : "Rotate",
+		"selection" : "Selection",
 		"weight" : "Weight",
 	};
 	env.ctrls = {
@@ -35,6 +39,8 @@ function initEnv() {
 		"KeyF" : env.modes.dfs,
 		"KeyN" : env.modes.normal,
 		"KeyP" : env.modes.prim,
+		"KeyR" : env.modes.rotate,
+		"KeyS" : env.modes.selection,
 		"KeyU" : env.modes.connected,
 		"KeyW" : env.modes.weight,
 	};
